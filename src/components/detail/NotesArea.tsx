@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { BookmarkWithDetails } from '../../types';
 import { useBookmarkStore } from '../../stores/useBookmarkStore';
+import { confirmDialog } from '../../utils/helpers';
 import { FiSend, FiTrash2 } from 'react-icons/fi';
 
 interface NotesAreaProps {
@@ -81,8 +82,8 @@ export function NotesArea({ bookmark }: NotesAreaProps) {
                   <button
                     className="btn-icon opacity-0 group-hover:opacity-100 transition-opacity"
                     style={{ width: 24, height: 24, color: 'var(--color-danger)' }}
-                    onClick={() => {
-                      if (confirm('确定要删除这条笔记吗？')) {
+                    onClick={async () => {
+                      if (await confirmDialog('确定要删除这条笔记吗？')) {
                         handleDelete(note.id);
                       }
                     }}

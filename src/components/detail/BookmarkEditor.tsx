@@ -3,7 +3,7 @@ import type { BookmarkWithDetails } from '../../types';
 import { useDataStore } from '../../stores/useDataStore';
 import { useBookmarkStore } from '../../stores/useBookmarkStore';
 import { useToastStore } from '../../stores/useToastStore';
-import { copyToClipboard, formatMarkdownLink, openUrl } from '../../utils/helpers';
+import { copyToClipboard, formatMarkdownLink, openUrl, confirmDialog } from '../../utils/helpers';
 import { FiExternalLink, FiCopy, FiSave, FiTrash2, FiX } from 'react-icons/fi';
 
 interface BookmarkEditorProps {
@@ -48,7 +48,7 @@ export function BookmarkEditor({ bookmark }: BookmarkEditorProps) {
   }, [bookmark.id, title, url, description, selectedFolderIds, selectedCollectionIds, selectedTagIds, updateBookmark]);
 
   const handleDelete = useCallback(async () => {
-    if (confirm('确定要删除这个书签吗？')) {
+    if (await confirmDialog('确定要删除这个书签吗？')) {
       await removeBookmark(bookmark.id);
     }
   }, [bookmark.id, removeBookmark]);

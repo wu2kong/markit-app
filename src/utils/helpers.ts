@@ -63,3 +63,12 @@ export function formatDate(dateStr: string): string {
   if (days < 7) return `${days}d ago`;
   return date.toLocaleDateString();
 }
+
+export async function confirmDialog(message: string): Promise<boolean> {
+  try {
+    const { ask } = await import('@tauri-apps/plugin-dialog');
+    return await ask(message, { kind: 'warning' });
+  } catch {
+    return window.confirm(message);
+  }
+}
