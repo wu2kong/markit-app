@@ -14,7 +14,7 @@ export function BookmarkCard({ bookmark, isSelected, onSelect, onContextMenu }: 
 
   return (
     <div
-      className="rounded-lg p-4 cursor-pointer transition-all group select-none"
+      className="rounded-lg p-4 cursor-pointer group select-none"
       style={{
         background: isSelected ? 'var(--color-accent-light)' : 'var(--color-bg-secondary)',
         border: `1px solid ${isSelected ? 'var(--color-accent)' : 'var(--color-border-light)'}`,
@@ -22,6 +22,20 @@ export function BookmarkCard({ bookmark, isSelected, onSelect, onContextMenu }: 
       onClick={onSelect}
       onDoubleClick={() => openUrl(bookmark.url)}
       onContextMenu={onContextMenu}
+      onMouseEnter={(e) => {
+        if (!isSelected) {
+          (e.currentTarget as HTMLElement).style.background = 'var(--color-bg-hover)';
+          (e.currentTarget as HTMLElement).style.borderColor = 'var(--color-accent)';
+          (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-md)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isSelected) {
+          (e.currentTarget as HTMLElement).style.background = 'var(--color-bg-secondary)';
+          (e.currentTarget as HTMLElement).style.borderColor = 'var(--color-border-light)';
+          (e.currentTarget as HTMLElement).style.boxShadow = 'none';
+        }
+      }}
     >
       <div className="flex items-start justify-between gap-4 mb-4">
         <div className="flex items-start gap-3 flex-1 min-w-0">

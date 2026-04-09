@@ -21,6 +21,16 @@ export function BookmarkCompactItem({ bookmark, isSelected, onSelect, onContextM
       onClick={onSelect}
       onDoubleClick={() => openUrl(bookmark.url)}
       onContextMenu={onContextMenu}
+      onMouseEnter={(e) => {
+        if (!isSelected) {
+          (e.currentTarget as HTMLElement).style.background = 'var(--color-bg-hover)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isSelected) {
+          (e.currentTarget as HTMLElement).style.background = 'transparent';
+        }
+      }}
     >
       <Favicon
         url={bookmark.favicon_url}

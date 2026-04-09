@@ -79,6 +79,16 @@ function FolderItem({
           if (hasChildren) setExpanded(!expanded);
         }}
         onContextMenu={handleContextMenu}
+        onMouseEnter={(e) => {
+          if (!isSelected) {
+            (e.currentTarget as HTMLElement).style.background = 'var(--color-bg-hover)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isSelected) {
+            (e.currentTarget as HTMLElement).style.background = 'transparent';
+          }
+        }}
       >
         {hasChildren ? (
           expanded ? <FiChevronDown size={14} /> : <FiChevronRight size={14} />

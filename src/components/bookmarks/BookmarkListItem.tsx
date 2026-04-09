@@ -14,13 +14,23 @@ export function BookmarkListItem({ bookmark, isSelected, onSelect, onContextMenu
 
   return (
     <div
-      className="flex items-center gap-3 px-4 py-3.5 mx-1.5 rounded-md cursor-pointer group transition-all select-none"
+      className="flex items-center gap-3 px-4 py-3.5 mx-1.5 rounded-md cursor-pointer group select-none"
       style={{
         background: isSelected ? 'var(--color-accent-light)' : 'transparent',
       }}
       onClick={onSelect}
       onDoubleClick={() => openUrl(bookmark.url)}
       onContextMenu={onContextMenu}
+      onMouseEnter={(e) => {
+        if (!isSelected) {
+          (e.currentTarget as HTMLElement).style.background = 'var(--color-bg-hover)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isSelected) {
+          (e.currentTarget as HTMLElement).style.background = 'transparent';
+        }
+      }}
     >
       <Favicon
         url={bookmark.favicon_url}

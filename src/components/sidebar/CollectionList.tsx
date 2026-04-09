@@ -69,6 +69,16 @@ function CollectionItem({
         }}
         onClick={() => onSelect(collection.id)}
         onContextMenu={handleContextMenu}
+        onMouseEnter={(e) => {
+          if (!isSelected) {
+            (e.currentTarget as HTMLElement).style.background = 'var(--color-bg-hover)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isSelected) {
+            (e.currentTarget as HTMLElement).style.background = 'transparent';
+          }
+        }}
       >
         <FiLayers size={14} style={{ color: 'var(--color-accent)' }} />
         <span className="flex-1 truncate">{collection.name}</span>
