@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useViewStore } from '../../stores/useViewStore';
 import { useBookmarkStore } from '../../stores/useBookmarkStore';
 import { useWorkspaceStore } from '../../stores/useWorkspaceStore';
+import { useToastStore } from '../../stores/useToastStore';
 import { parseUrlInput } from '../../utils/helpers';
 import { FiPlus } from 'react-icons/fi';
 
@@ -12,6 +13,7 @@ export function AddBookmarkInput() {
   const selection = useViewStore((s) => s.selection);
   const addBookmark = useBookmarkStore((s) => s.addBookmark);
   const currentWorkspaceId = useWorkspaceStore((s) => s.currentWorkspaceId);
+  const showToast = useToastStore((s) => s.showToast);
 
   const handleSubmit = useCallback(async () => {
     if (!input.trim() || !currentWorkspaceId) return;
@@ -23,19 +25,29 @@ export function AddBookmarkInput() {
     const collectionIds = selection.type === 'collections' && selection.id ? [selection.id] : undefined;
     const tagIds = selection.type === 'tags' && selection.id ? [selection.id] : undefined;
 
-    await addBookmark({
-      workspace_id: currentWorkspaceId,
-      url: parsed.url,
-      title: bookmarkTitle,
-      folder_ids: folderIds,
-      collection_ids: collectionIds,
-      tag_ids: tagIds,
-    });
+    try {
+      const result = await addBookmark({
+        workspace_id: currentWorkspaceId,
+        url: parsed.url,
+        title: bookmarkTitle,
+        folder_ids: folderIds,
+        collection_ids: collectionIds,
+        tag_ids: tagIds,
+      });
 
-    setInput('');
-    setTitle('');
-    setIsExpanded(false);
-  }, [input, title, currentWorkspaceId, selection, addBookmark]);
+      if (result) {
+        showToast('书签添加成功', 'success');
+        setInput('');
+        setTitle('');
+        setIsExpanded(false);
+      } else {
+        showToast('添加书签失败，请重试', 'error');
+      }
+    } catch (error) {
+      console.error('Failed to add bookmark:', error);
+      showToast('添加书签失败，请重试', 'error');
+    }
+  }, [input, title, currentWorkspaceId, selection, addBookmark, showToast]);
 
   const handleInputChange = (value: string) => {
     setInput(value);

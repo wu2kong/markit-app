@@ -19,6 +19,7 @@ pub async fn fetch_page_metadata(url: &str) -> Result<PageMetadata, String> {
     let client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(10))
         .user_agent("Mozilla/5.0 (compatible; MarkIt/1.0)")
+        .redirect(reqwest::redirect::Policy::limited(3))
         .build()
         .map_err(|e| e.to_string())?;
 
@@ -156,6 +157,7 @@ pub async fn download_favicon_internal(
     let client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(10))
         .user_agent("Mozilla/5.0 (compatible; MarkIt/1.0)")
+        .redirect(reqwest::redirect::Policy::limited(3))
         .build()
         .map_err(|e| e.to_string())?;
 

@@ -3,6 +3,7 @@ import { useThemeStore } from './stores/useThemeStore';
 import { useWorkspaceStore } from './stores/useWorkspaceStore';
 import { useDataStore } from './stores/useDataStore';
 import { AppHeader } from './components/layout/AppHeader';
+import { WorkspaceSidebar } from './components/sidebar/WorkspaceSidebar';
 import { Sidebar } from './components/sidebar/Sidebar';
 import { BookmarkPanel } from './components/bookmarks/BookmarkPanel';
 import { DetailPanel } from './components/detail/DetailPanel';
@@ -35,6 +36,7 @@ function App() {
     >
       <AppHeader />
       <div className="flex flex-1 overflow-hidden">
+        <WorkspaceSidebar />
         <Sidebar />
         <BookmarkPanel />
         <DetailPanel />

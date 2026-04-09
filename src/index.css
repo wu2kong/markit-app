@@ -251,3 +251,49 @@ body {
   border-color: var(--color-accent) !important;
   transition: all 0.15s ease;
 }
+
+.workspace-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 4px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+  background: transparent;
+  font-size: 11px;
+}
+
+.workspace-item:hover {
+  background: var(--color-bg-hover);
+}
+
+.workspace-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.workspace-add-icon {
+  background: transparent !important;
+  border-radius: var(--radius-md);
+}
+
+.workspace-item-label {
+  font-size: 10px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 56px;
+  text-align: center;
+}
