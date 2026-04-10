@@ -1,73 +1,80 @@
-# React + TypeScript + Vite
+# MarkIt
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A cross-platform bookmark manager built with [Tauri](https://tauri.app/) v2, React, and TypeScript. Organize your bookmarks with folders, collections, tags, and notes — all stored locally in SQLite.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Multi-Workspace** — Create separate workspaces to isolate different bookmark collections
+- **Folder Hierarchy** — Nest folders within folders for deep organization
+- **Collections** — Group bookmarks into thematic collections across folders
+- **Tags with Hierarchy** — Use nested tags with custom colors for flexible categorization
+- **Notes** — Attach notes to any bookmark for context and annotations
+- **Multiple Display Modes** — View bookmarks as a list, cards, or compact rows
+- **Auto Metadata** — Automatically fetch page title, description, and favicon when adding a URL
+- **Search** — Full-text search across all bookmarks in a workspace
+- **Export** — Export bookmarks in CSV, JSON, or Markdown format
+- **Dark / Light Theme** — Toggle between light and dark modes
+- **Resizable Panels** — Drag to resize workspace sidebar, folder sidebar, bookmark list, and detail panel
+- **Local-First** — All data is stored locally in SQLite; no cloud account required
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Layer | Technology |
+| --- | --- |
+| Frontend | React 19 · TypeScript · Tailwind CSS 4 · Zustand |
+| Backend | Tauri v2 · Rust · rusqlite (SQLite) |
+| Build | Vite · pnpm |
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- [Node.js](https://nodejs.org/) ≥ 18
+- [pnpm](https://pnpm.io/) 
+- [Rust](https://www.rust-lang.org/tools/install) ≥ 1.77
+- Platform-specific dependencies for [Tauri v2](https://v2.tauri.app/start/prerequisites/)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Install & Run
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# Install frontend dependencies
+pnpm install
+
+# Start development server with Tauri window
+pnpm tauri dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Build
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm tauri build
 ```
+
+The built application will be in `src-tauri/target/release/bundle/`.
+
+## Project Structure
+
+```
+markit-app/
+├── src/                        # React frontend
+│   ├── components/
+│   │   ├── bookmarks/          # Bookmark list, card, compact, context menu, add input
+│   │   ├── common/             # Shared components (Toast, ContextMenu, ResizeHandle, Favicon)
+│   │   ├── detail/             # Bookmark editor & notes panel
+│   │   ├── layout/             # App header
+│   │   └── sidebar/            # Workspace sidebar, folder tree, collections, tags, notes list
+│   ├── stores/                 # Zustand state stores
+│   ├── types/                  # TypeScript type definitions
+│   └── utils/                  # API layer (Tauri IPC)
+├── src-tauri/                  # Rust backend
+│   ├── src/
+│   │   ├── commands/           # Tauri command handlers (workspaces, folders, collections, tags, bookmarks, notes, metadata)
+│   │   └── db/                 # SQLite initialization & models
+│   └── Cargo.toml
+├── package.json
+└── vite.config.ts
+```
+
+## License
+
+MIT

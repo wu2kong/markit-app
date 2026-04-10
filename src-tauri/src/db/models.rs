@@ -5,6 +5,8 @@ pub struct Workspace {
     pub id: String,
     pub name: String,
     pub icon: Option<String>,
+    pub color: Option<String>,
+    pub sort_order: i32,
     pub created_at: String,
     pub updated_at: String,
 }
@@ -97,6 +99,7 @@ pub struct TagWithChildren {
 pub struct CreateWorkspace {
     pub name: String,
     pub icon: Option<String>,
+    pub color: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -104,6 +107,8 @@ pub struct UpdateWorkspace {
     pub id: String,
     pub name: Option<String>,
     pub icon: Option<String>,
+    pub color: Option<String>,
+    pub sort_order: Option<i32>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

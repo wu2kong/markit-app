@@ -7,6 +7,7 @@ pub fn init_db(app: &AppHandle) -> Result<Connection, String> {
         .path()
         .app_data_dir()
         .map_err(|e| format!("Failed to get app data dir: {}", e))?;
+    println!("app_dir: {:?}", app_dir);
 
     std::fs::create_dir_all(&app_dir)
         .map_err(|e| format!("Failed to create app data dir: {}", e))?;
@@ -18,7 +19,33 @@ pub fn init_db(app: &AppHandle) -> Result<Connection, String> {
         .map_err(|e| format!("Failed to set pragmas: {}", e))?;
 
     create_tables(&conn)?;
+    run_migrations(&conn)?;
     Ok(conn)
+}
+
+fn run_migrations(conn: &Connection) -> Result<(), String> {
+    let columns: Vec<String> = conn
+        .prepare("PRAGMA table_info(workspaces)")
+        .and_then(|mut stmt| {
+            let rows = stmt.query_map([], |row| row.get::<_, String>(1))?;
+            Ok(rows.filter_map(|r| r.ok()).collect::<Vec<_>>())
+        })
+        .unwrap_or_default();
+
+    if !columns.iter().any(|c| c == "color") {
+        conn.execute("ALTER TABLE workspaces ADD COLUMN color TEXT", [])
+            .map_err(|e| format!("Failed to add color column: {}", e))?;
+    }
+
+    if !columns.iter().any(|c| c == "sort_order") {
+        conn.execute(
+            "ALTER TABLE workspaces ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0",
+            [],
+        )
+        .map_err(|e| format!("Failed to add sort_order column: {}", e))?;
+    }
+
+    Ok(())
 }
 
 fn create_tables(conn: &Connection) -> Result<(), String> {
@@ -28,6 +55,8 @@ fn create_tables(conn: &Connection) -> Result<(), String> {
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
             icon TEXT,
+            color TEXT,
+            sort_order INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL DEFAULT (datetime('now')),
             updated_at TEXT NOT NULL DEFAULT (datetime('now'))
         );

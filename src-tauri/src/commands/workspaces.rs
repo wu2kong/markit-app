@@ -8,7 +8,7 @@ pub fn list_workspaces(
     let conn = state.lock().map_err(|e| e.to_string())?;
     let mut stmt = conn
         .prepare(
-            "SELECT id, name, icon, created_at, updated_at FROM workspaces ORDER BY created_at",
+            "SELECT id, name, icon, color, sort_order, created_at, updated_at FROM workspaces ORDER BY sort_order",
         )
         .map_err(|e| e.to_string())?;
     let rows = stmt
@@ -17,8 +17,10 @@ pub fn list_workspaces(
                 id: row.get(0)?,
                 name: row.get(1)?,
                 icon: row.get(2)?,
-                created_at: row.get(3)?,
-                updated_at: row.get(4)?,
+                color: row.get(3)?,
+                sort_order: row.get(4)?,
+                created_at: row.get(5)?,
+                updated_at: row.get(6)?,
             })
         })
         .map_err(|e| e.to_string())?;
@@ -40,15 +42,25 @@ pub fn create_workspace(
         .naive_utc()
         .format("%Y-%m-%d %H:%M:%S")
         .to_string();
+    let max_sort_order: i32 = conn
+        .query_row(
+            "SELECT COALESCE(MAX(sort_order), -1) FROM workspaces",
+            [],
+            |row| row.get(0),
+        )
+        .unwrap_or(-1);
+    let sort_order = max_sort_order + 1;
     conn.execute(
-        "INSERT INTO workspaces (id, name, icon, created_at, updated_at) VALUES (?1, ?2, ?3, ?4, ?5)",
-        [&id, &input.name, &input.icon.clone().unwrap_or_default(), &now, &now],
+        "INSERT INTO workspaces (id, name, icon, color, sort_order, created_at, updated_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+        [&id, &input.name, &input.icon.clone().unwrap_or_default(), &input.color.clone().unwrap_or_default(), &sort_order.to_string(), &now, &now],
     )
     .map_err(|e| e.to_string())?;
     Ok(Workspace {
         id,
         name: input.name,
         icon: input.icon,
+        color: input.color,
+        sort_order,
         created_at: now.clone(),
         updated_at: now,
     })
@@ -74,13 +86,21 @@ pub fn update_workspace(
         sets.push(format!("icon = ?{}", params.len() + 1));
         params.push(Box::new(icon.clone()));
     }
+    if let Some(ref color) = input.color {
+        sets.push(format!("color = ?{}", params.len() + 1));
+        params.push(Box::new(color.clone()));
+    }
+    if let Some(sort_order) = input.sort_order {
+        sets.push(format!("sort_order = ?{}", params.len() + 1));
+        params.push(Box::new(sort_order));
+    }
     params.push(Box::new(input.id.clone()));
     let sql = format!("UPDATE workspaces SET {} WHERE id = ?", sets.join(", "));
     let param_refs: Vec<&dyn rusqlite::types::ToSql> = params.iter().map(|p| p.as_ref()).collect();
     conn.execute(sql.as_str(), param_refs.as_slice())
         .map_err(|e| e.to_string())?;
     let mut stmt = conn
-        .prepare("SELECT id, name, icon, created_at, updated_at FROM workspaces WHERE id = ?1")
+        .prepare("SELECT id, name, icon, color, sort_order, created_at, updated_at FROM workspaces WHERE id = ?1")
         .map_err(|e| e.to_string())?;
     let workspace = stmt
         .query_row([&input.id], |row| {
@@ -88,8 +108,10 @@ pub fn update_workspace(
                 id: row.get(0)?,
                 name: row.get(1)?,
                 icon: row.get(2)?,
-                created_at: row.get(3)?,
-                updated_at: row.get(4)?,
+                color: row.get(3)?,
+                sort_order: row.get(4)?,
+                created_at: row.get(5)?,
+                updated_at: row.get(6)?,
             })
         })
         .map_err(|e| e.to_string())?;

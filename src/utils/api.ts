@@ -26,7 +26,7 @@ export interface PageMetadata {
 // Workspaces
 export const listWorkspaces = () => invoke<Workspace[]>('list_workspaces');
 export const createWorkspace = (input: CreateWorkspaceInput) => invoke<Workspace>('create_workspace', { input });
-export const updateWorkspace = (input: { id: string; name?: string; icon?: string }) => invoke<Workspace>('update_workspace', { input });
+export const updateWorkspace = (input: { id: string; name?: string; icon?: string; color?: string; sort_order?: number }) => invoke<Workspace>('update_workspace', { input });
 export const deleteWorkspace = (id: string) => invoke<void>('delete_workspace', { id });
 
 // Folders

@@ -2,6 +2,8 @@ export interface Workspace {
   id: string;
   name: string;
   icon: string | null;
+  color: string | null;
+  sort_order: number;
   created_at: string;
   updated_at: string;
 }
@@ -95,6 +97,15 @@ export interface SelectionState {
 export interface CreateWorkspaceInput {
   name: string;
   icon?: string;
+  color?: string;
+}
+
+export interface UpdateWorkspaceInput {
+  id: string;
+  name?: string;
+  icon?: string;
+  color?: string;
+  sort_order?: number;
 }
 
 export interface CreateFolderInput {
